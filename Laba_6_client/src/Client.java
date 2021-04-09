@@ -1,20 +1,15 @@
 import java.io.*;
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.util.Arrays;
 
-
 public class Client {
     private String host;
     private int port;
-    private Console console;
-    private DatagramSocket socket;
-    private SocketAddress address;
-    //private ByteBuffer byteBuffer = ByteBuffer.allocate(16384);
+    private ByteBuffer byteBuffer = ByteBuffer.allocate(16384);
 
     public Client(String host, int port) {
         this.host = host;
@@ -22,7 +17,9 @@ public class Client {
     }
 
     public void run() {
-        try {
+        /*try {
+            private DatagramSocket socket;
+            private SocketAddress address;
             byte[] buffer = new byte[1000];
             socket = new DatagramSocket();
             //DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
@@ -45,6 +42,21 @@ public class Client {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+        } */
+
+        try {
+            SocketAddress socket = new InetSocketAddress(host, port);
+            DatagramChannel channel = DatagramChannel.open();
+            channel.connect(socket);
+            byteBuffer = ByteBuffer.wrap(serializable("FIRST message"));
+
+            channel.send(byteBuffer, socket);
+
+            ByteBuffer answer = ByteBuffer.allocate(16384);
+            socket = channel.receive(answer);
+            System.out.println(deserialize(answer));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
 
@@ -62,8 +74,8 @@ public class Client {
         return buffer;
     }
 
-    private String deserialize(DatagramPacket getPacket) throws IOException, ClassNotFoundException {
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(getPacket.getData());
+    private String deserialize(ByteBuffer byteBuffer) throws IOException, ClassNotFoundException {
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteBuffer.array());
         ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
         String response = (String) objectInputStream.readObject();
         byteArrayInputStream.close();

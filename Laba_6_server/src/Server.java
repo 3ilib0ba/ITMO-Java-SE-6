@@ -17,7 +17,7 @@ public class Server {
     }
 
     public void run() {
-        System.out.println("Сервер запущен");
+        System.out.println("Server is running");
         boolean processStatus = true;
 
         //while (processStatus) {
@@ -33,14 +33,14 @@ public class Server {
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
             socket.receive(packet);
-            System.out.println("Пакет получен " + deserialize(packet));
+            System.out.println("Package has been got: " + deserialize(packet));
             address = packet.getAddress();
             PORT = packet.getPort();
 
-            byte[] sendBuffer = serialize("говно из жопы");
+            byte[] sendBuffer = serialize("With love from server");
             DatagramPacket sendPacket = new DatagramPacket(sendBuffer, sendBuffer.length, address, PORT);
             socket.send(sendPacket);
-            System.out.println("отправлено по порту " + sendPacket.getAddress() + ", сообщение: " + deserialize(sendPacket));
+            System.out.println("Sending to " + sendPacket.getAddress() + ", message: " + deserialize(sendPacket));
         } catch (Exception e) {
             e.printStackTrace();
         }
