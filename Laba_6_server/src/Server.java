@@ -1,8 +1,6 @@
 import java.io.*;
 import java.net.*;
-import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class Server {
@@ -10,27 +8,32 @@ public class Server {
     private DatagramChannel channel;
     private InetAddress address;
     private DatagramSocket socket;
+
     private Scanner scanner;
 
-    public Server(int port){
+    public Server(int port) {
         PORT = port;
     }
 
     public void run() {
         System.out.println("Server is running");
-        boolean processStatus = true;
 
-        //while (processStatus) {
-            processStatus = clientRequest();
-        //}
+//        try {
+//
+//            //while (true) {
+//                clientRequest();
+//            //}
+//        } catch (SocketException e) {
+//            e.printStackTrace();
+//        }
+        clientRequest();
     }
 
-    public boolean clientRequest() {
+    public void clientRequest() {
         try {
             socket = new DatagramSocket(2468);
-
-            byte[] buffer = new byte[1000];
-            DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+            byte[] accept = new byte[16384];
+            DatagramPacket packet = new DatagramPacket(accept, accept.length);
 
             socket.receive(packet);
             System.out.println("Package has been got: " + deserialize(packet));
@@ -44,8 +47,6 @@ public class Server {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        return true;
     }
 
     private String deserialize(DatagramPacket getPacket) throws IOException, ClassNotFoundException {

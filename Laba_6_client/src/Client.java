@@ -1,10 +1,8 @@
 import java.io.*;
-import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
-import java.util.Arrays;
 
 public class Client {
     private String host;
@@ -17,39 +15,14 @@ public class Client {
     }
 
     public void run() {
-        /*try {
-            private DatagramSocket socket;
-            private SocketAddress address;
-            byte[] buffer = new byte[1000];
-            socket = new DatagramSocket();
-            //DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-
-            address = new InetSocketAddress("localhost", this.port);
-            socket.connect(address);
-
-            byte[] sending = serializable("Жопа АДМИНА");
-            socket.send(new DatagramPacket(sending, sending.length, address));
-            System.out.println("Отправлено на сервер: " + "Жопа АДМИНА");
-
-            System.out.println("Получение с сервера");
-            DatagramPacket answer = new DatagramPacket(buffer, buffer.length);
-            socket.receive(answer);
-            System.out.println(deserialize(answer));
-
-            //String otvet = deserialize(packet);
-            //System.out.println(otvet);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } */
 
         try {
             SocketAddress socket = new InetSocketAddress(host, port);
             DatagramChannel channel = DatagramChannel.open();
             channel.connect(socket);
-            byteBuffer = ByteBuffer.wrap(serializable("FIRST message"));
+            //channel.configureBlocking(false);
 
+            byteBuffer = ByteBuffer.wrap(serializable("FIRST message"));
             channel.send(byteBuffer, socket);
 
             ByteBuffer answer = ByteBuffer.allocate(16384);
@@ -62,7 +35,7 @@ public class Client {
 
     }
 
-    private byte[] serializable(String request) throws IOException{
+    private byte[] serializable(String request) throws IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
         objectOutputStream.writeObject(request);
