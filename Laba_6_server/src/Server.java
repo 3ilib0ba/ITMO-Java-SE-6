@@ -69,9 +69,4 @@ public class Server {
         objectOutputStream.close();
         return buffer;
     }
-
-    public static void main(String[] args) {
-        Server server = new Server(2468);
-        server.run();
-    }
 }

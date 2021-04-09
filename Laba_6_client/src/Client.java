@@ -55,9 +55,4 @@ public class Client {
         objectInputStream.close();
         return response;
     }
-
-    public static void main(String[] args) throws IOException {
-        Client client = new Client("localhost", 2468);
-        client.run();
-    }
 }
