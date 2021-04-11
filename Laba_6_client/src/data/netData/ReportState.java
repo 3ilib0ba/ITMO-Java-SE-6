@@ -3,5 +3,5 @@ package data.netData;
 public enum ReportState {
     OK,
     ERROR,
-    SERVER_EXIT
+    SERVER_CLOSE
 }

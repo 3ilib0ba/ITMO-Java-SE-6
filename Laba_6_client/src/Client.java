@@ -29,41 +29,75 @@ public class Client {
     public void run() {
         Request request;
         Report answer;
-
         try {
-            address = new InetSocketAddress(host, port);
             channel = DatagramChannel.open();
+            address = new InetSocketAddress("localhost", port);
             channel.connect(address);
-            //channel.configureBlocking(false);
+            channel.configureBlocking(false);
+            selector = Selector.open();
+            channel.register(selector, SelectionKey.OP_WRITE);
+
+
             while (true) {
                 request = null; // new initialization
                 sendRequest(request);
 
                 answer = null; // new initialization
                 answer = getAnswer();
-                System.out.println(answer.getReportBody());
+                System.out.println("Received from server: " + answer.getReportBody());
             }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                selector.close();
+            } catch (IOException e) {
+                System.out.println("Selector can't be closing");;
+            }
         }
     }
 
     private void sendRequest(Request request)
-            throws IOException{
+            throws IOException {
         System.out.print("Enter the command: ");
         String command = scanner.nextLine();
-        // TODO обработка команды...
         request = new Request(command, "");
 
-        // sending the request
         byteBuffer = ByteBuffer.wrap(serialize(request));
-        channel.send(byteBuffer, address);
+
+        // sending from selector with unblocking configuration
+        selector.select();
+        Set<SelectionKey> selectionKeys = selector.selectedKeys();
+        for (SelectionKey key : selectionKeys) {
+            if (key.isWritable()) {
+                DatagramChannel datagramChannel = (DatagramChannel) key.channel();
+                datagramChannel.write(byteBuffer);
+                datagramChannel.register(selector, SelectionKey.OP_READ);
+                break;
+            }
+        }
+        byteBuffer.clear();
+
     }
 
     private Report getAnswer()
             throws IOException, ClassNotFoundException {
         byteBuffer = ByteBuffer.allocate(16384);
-        address = channel.receive(byteBuffer);
+
+        DatagramChannel datagramChannel = null;
+        while (datagramChannel == null) {
+            selector.select();
+            Set<SelectionKey> selectionKeys = selector.selectedKeys();
+            for (SelectionKey key : selectionKeys) {
+                if (key.isReadable()) {
+                    datagramChannel = (DatagramChannel) key.channel();
+                    datagramChannel.read(byteBuffer);
+                    byteBuffer.flip();
+                    datagramChannel.register(selector, SelectionKey.OP_WRITE);
+                    break;
+                }
+            }
+        }
         return deserialize();
     }
 

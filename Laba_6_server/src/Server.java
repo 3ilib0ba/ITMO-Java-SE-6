@@ -13,13 +13,15 @@ public class Server {
 
     private Scanner scanner;
 
-    public Server(int port) {
+    public Server(int port, Scanner scanner) {
         PORT = port;
+        this.scanner = scanner;
     }
 
     public void run() {
         try {
             socket = new DatagramSocket(2468);
+
             while (true)
                 clientRequest();
         } catch (SocketException e) {
@@ -45,8 +47,13 @@ public class Server {
             address = getPacket.getAddress();
             PORT = getPacket.getPort();
 
+            //Trying to send a string from console mode in blocking configuration
+            System.out.print("Enter the answer: ");
+            String simpleAnswer = scanner.nextLine();
+            //String simpleAnswer = "OKOKOKOKOK";
+
             //Sending a report to client
-            report = new Report(ReportState.OK, "Command have been got");
+            report = new Report(ReportState.OK, simpleAnswer);
             byte[] sendBuffer = serialize(report);
             DatagramPacket sendPacket = new DatagramPacket(sendBuffer, sendBuffer.length, address, PORT);
             socket.send(sendPacket);
