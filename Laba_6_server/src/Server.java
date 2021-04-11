@@ -1,11 +1,13 @@
+import data.netData.Report;
+import data.netData.ReportState;
+import data.netData.Request;
+
 import java.io.*;
 import java.net.*;
-import java.nio.channels.DatagramChannel;
 import java.util.Scanner;
 
 public class Server {
     private int PORT;
-    private DatagramChannel channel;
     private InetAddress address;
     private DatagramSocket socket;
 
@@ -16,52 +18,57 @@ public class Server {
     }
 
     public void run() {
-        System.out.println("Server is running");
+        try {
+            socket = new DatagramSocket(2468);
+            while (true)
+                clientRequest();
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
 
-//        try {
-//
-//            //while (true) {
-//                clientRequest();
-//            //}
-//        } catch (SocketException e) {
-//            e.printStackTrace();
-//        }
-        clientRequest();
     }
 
     public void clientRequest() {
+        Request request = null;
+        Report report = null;
+
         try {
-            socket = new DatagramSocket(2468);
             byte[] accept = new byte[16384];
-            DatagramPacket packet = new DatagramPacket(accept, accept.length);
+            DatagramPacket getPacket = new DatagramPacket(accept, accept.length);
 
-            socket.receive(packet);
-            System.out.println("Package has been got: " + deserialize(packet));
-            address = packet.getAddress();
-            PORT = packet.getPort();
+            //Getting a new request from client
+            socket.receive(getPacket);
+            request = deserialize(getPacket);
+            System.out.println("Command has been got: " + request.getCommandName());
 
-            byte[] sendBuffer = serialize("With love from server");
+            //Save path to client
+            address = getPacket.getAddress();
+            PORT = getPacket.getPort();
+
+            //Sending a report to client
+            report = new Report(ReportState.OK, "Command have been got");
+            byte[] sendBuffer = serialize(report);
             DatagramPacket sendPacket = new DatagramPacket(sendBuffer, sendBuffer.length, address, PORT);
             socket.send(sendPacket);
-            System.out.println("Sending to " + sendPacket.getAddress() + ", message: " + deserialize(sendPacket));
+            System.out.println("Sending to " + sendPacket.getAddress() + ", message: " + report.getReportBody());
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private String deserialize(DatagramPacket getPacket) throws IOException, ClassNotFoundException {
+    private <T> T deserialize(DatagramPacket getPacket) throws IOException, ClassNotFoundException {
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(getPacket.getData());
         ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
-        String request = (String) objectInputStream.readObject();
+        T request = (T) objectInputStream.readObject();
         byteArrayInputStream.close();
         objectInputStream.close();
         return request;
     }
 
-    private byte[] serialize(String response) throws IOException {
+    private <T> byte[] serialize(T toSerialize) throws IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
-        objectOutputStream.writeObject(response);
+        objectOutputStream.writeObject(toSerialize);
         byte[] buffer = byteArrayOutputStream.toByteArray();
         objectOutputStream.flush();
         byteArrayOutputStream.flush();
