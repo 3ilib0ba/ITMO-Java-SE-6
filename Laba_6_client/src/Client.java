@@ -27,6 +27,7 @@ public class Client {
     }
 
     public void run() {
+        Request request;
         Report answer;
 
         try {
@@ -34,20 +35,27 @@ public class Client {
             channel = DatagramChannel.open();
             channel.connect(address);
             //channel.configureBlocking(false);
-            //while (true) {
-                sendRequest();
+            while (true) {
+                request = null; // new initialization
+                sendRequest(request);
 
+                answer = null; // new initialization
                 answer = getAnswer();
                 System.out.println(answer.getReportBody());
-            //}
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void sendRequest()
+    private void sendRequest(Request request)
             throws IOException{
-        Request request = new Request("HelloCommand", "");
+        System.out.print("Enter the command: ");
+        String command = scanner.nextLine();
+        // TODO обработка команды...
+        request = new Request(command, "");
+
+        // sending the request
         byteBuffer = ByteBuffer.wrap(serialize(request));
         channel.send(byteBuffer, address);
     }
