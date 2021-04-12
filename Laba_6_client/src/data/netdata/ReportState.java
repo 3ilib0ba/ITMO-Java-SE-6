@@ -1,4 +1,4 @@
-package data.netData;
+package data.netdata;
 
 public enum ReportState {
     OK,

@@ -1,11 +1,10 @@
-package data.netData;
+package data.netdata;
 
 import java.io.Serializable;
 
 public class Report implements Serializable {
     private ReportState reportState;
     private String reportBody;
-    // TODO private static long serializationVersionID = 1L; <-- create this field in other classes
 
     public Report(ReportState reportState, String reportBody) {
         this.reportState = reportState;

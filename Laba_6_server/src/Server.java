@@ -1,9 +1,14 @@
-import data.netData.Report;
-import data.netData.ReportState;
-import data.netData.Request;
+import collectionofflats.MyTreeMap;
+import collectionofflats.StartWorkWithCollection;
+import data.netdata.Report;
+import data.netdata.Request;
+import data.workwithrequest.ExecuteRequest;
 
 import java.io.*;
-import java.net.*;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
 import java.util.Scanner;
 
 public class Server {
@@ -12,6 +17,7 @@ public class Server {
     private DatagramSocket socket;
 
     private Scanner scanner;
+    private MyTreeMap myMap;
 
     public Server(int port, Scanner scanner) {
         PORT = port;
@@ -19,6 +25,7 @@ public class Server {
     }
 
     public void run() {
+        myMap = StartWorkWithCollection.initialization();
         try {
             socket = new DatagramSocket(2468);
 
@@ -38,22 +45,16 @@ public class Server {
             byte[] accept = new byte[16384];
             DatagramPacket getPacket = new DatagramPacket(accept, accept.length);
 
-            //Getting a new request from client
+            //Getting a new request from client and doing it
             socket.receive(getPacket);
             request = deserialize(getPacket);
-            System.out.println("Command has been got: " + request.getCommandName());
+            report = ExecuteRequest.doingRequest(request, myMap);
 
             //Save path to client
             address = getPacket.getAddress();
             PORT = getPacket.getPort();
 
-            //Trying to send a string from console mode in blocking configuration
-            System.out.print("Enter the answer: ");
-            String simpleAnswer = scanner.nextLine();
-            //String simpleAnswer = "OKOKOKOKOK";
-
             //Sending a report to client
-            report = new Report(ReportState.OK, simpleAnswer);
             byte[] sendBuffer = serialize(report);
             DatagramPacket sendPacket = new DatagramPacket(sendBuffer, sendBuffer.length, address, PORT);
             socket.send(sendPacket);

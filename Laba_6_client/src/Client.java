@@ -1,5 +1,5 @@
-import data.netData.Report;
-import data.netData.Request;
+import data.netdata.Report;
+import data.netdata.Request;
 
 import java.io.*;
 import java.net.InetSocketAddress;
