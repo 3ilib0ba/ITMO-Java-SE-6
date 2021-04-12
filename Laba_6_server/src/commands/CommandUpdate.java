@@ -27,8 +27,8 @@ public class CommandUpdate {
      * function for checking given id to existing in the MAP.
      * @param searchId - given id
      * @param map - given MAP to search
-     * @return
-     * @throws InvalidArgExcaption
+     * @return id of object if it in the collection
+     * @throws InvalidArgExcaption if id hadn't found
      */
     private Integer checkId(int searchId, TreeMap<Integer, Flat> map)
             throws InvalidArgExcaption {

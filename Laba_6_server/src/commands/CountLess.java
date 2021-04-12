@@ -17,7 +17,7 @@ public class CountLess {
             if (entry.getValue().getNumberOfBathrooms() < number)
                 counter++;
         }
-        ExecuteRequest.answer.append(counter + " objects with less number of bathrooms");
+        ExecuteRequest.answer.append(counter).append(" objects with less number of bathrooms");
 
         HistoryCommand.addHistory("count_less_than_number_of_bathrooms");
     }

@@ -8,7 +8,7 @@ import java.util.TreeMap;
  * Class that implements a storage with objects
  */
 public class MyTreeMap {
-    private TreeMap<Integer, Flat> MyMap;
+    private final TreeMap<Integer, Flat> MyMap;
     public static int ID_MAX = 1;
 
     public MyTreeMap() {

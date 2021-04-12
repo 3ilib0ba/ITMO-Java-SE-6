@@ -25,8 +25,8 @@ public class MinById {
     /**
      * method for search key of flat(in the MAP) with min id
      * @param map - Where flat will be searching
-     * @return
-     * @throws NullMapException
+     * @return key of object with min value
+     * @throws NullMapException if collection is empty
      */
     private Integer searchMin(TreeMap<Integer, Flat> map)
             throws NullMapException{

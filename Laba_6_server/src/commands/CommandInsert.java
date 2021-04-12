@@ -171,7 +171,7 @@ public class CommandInsert {
             if (answer.equals("")) {
                 return null;
             }
-            Long newNum = Long.parseLong(answer);
+            long newNum = Long.parseLong(answer);
             if (newNum <= 0) {
                 throw new InvalidArgExcaption("count > 0");
             }
@@ -259,7 +259,7 @@ public class CommandInsert {
         String name;                    //Поле не может быть null
         int year;                       //Значение поля должно быть больше 0
         int numberOfFlatsOnFloor;   //Значение поля должно быть больше 0
-        Integer numberOfLifts;      //Значение поля должно быть больше 0
+        int numberOfLifts;      //Значение поля должно быть больше 0
 
         System.out.println("creating a house");
 

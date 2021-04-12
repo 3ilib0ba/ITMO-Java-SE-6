@@ -22,7 +22,7 @@ public class Execute {
      * @param isFromFile - var to check about execute_script command
      * @param map        - MAP with objects
      * @param SCANNER    - mod of program
-     * @throws ExitException
+     * @throws ExitException if was invoke exit command
      */
     public static void execute(boolean isFromFile, MyTreeMap map, Scanner SCANNER)
             throws ExitException {

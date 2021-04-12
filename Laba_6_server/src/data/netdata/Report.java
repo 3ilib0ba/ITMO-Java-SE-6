@@ -3,7 +3,7 @@ package data.netdata;
 import java.io.Serializable;
 
 public class Report implements Serializable {
-    private ReportState reportState;
+    private final ReportState reportState;
     private String reportBody;
 
     public Report(ReportState reportState, String reportBody) {

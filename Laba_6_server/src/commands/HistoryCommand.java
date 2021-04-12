@@ -35,7 +35,7 @@ public abstract class HistoryCommand {
         int counter = 1;
 
         while (iterator.hasNext()) {
-            ExecuteRequest.answer.append(counter++ + ") " + iterator.next() + "\n");
+            ExecuteRequest.answer.append(counter++).append(") ").append(iterator.next()).append("\n");
         }
     }
 }

@@ -12,7 +12,7 @@ public class RemoveByKey {
     public RemoveByKey(TreeMap<Integer, Flat> map, Integer keyRemoved) {
         if (map.containsKey(keyRemoved)) {
             Flat removed = map.remove(keyRemoved);
-            ExecuteRequest.answer.append("Remove object " + removed);
+            ExecuteRequest.answer.append("Remove object ").append(removed);
         } else {
             ExecuteRequest.answer.append("Element with this key not found");
         }
