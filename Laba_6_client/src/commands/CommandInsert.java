@@ -1,8 +1,7 @@
 package commands;
 
-import commands.exceptions.InvalidArgExcaption;
 import collectionofflats.MyTreeMap;
-import data.workwithrequest.ExecuteRequest;
+import commands.exceptions.InvalidArgExcaption;
 import typesfiles.Coordinates;
 import typesfiles.Flat;
 import typesfiles.Furnish;
@@ -17,52 +16,37 @@ import static collectionofflats.MyTreeMap.ID_MAX;
  */
 public class CommandInsert {
     Scanner scanner;
-    private int id; // Значение поля должно быть больше 0,
-    // Значение этого поля должно быть уникальным,
-    // Значение этого поля должно генерироваться автоматически
-    private String name; // Поле не может быть null, Строка не может быть пустой
-    private Coordinates coordinates = new Coordinates(0, 0); // Поле не может быть null
-    //private java.util.Date creationDate; // Поле не может быть null, Значение этого поля должно генерироваться автоматически
-    private long area; // Максимальное значение поля: 667, Значение поля должно быть больше 0
-    private Long numberOfRooms; // Поле может быть null, Значение поля должно быть больше 0
-    private int numberOfBathrooms; // Значение поля должно быть больше 0
-    private long timeToMetroOnFoot; // Значение поля должно быть больше 0
-    private Furnish furnish; // Поле не может быть null
-    private House house;
 
-    public CommandInsert(Integer key, MyTreeMap map, boolean fromUpdate, Scanner scanner) {
-        execute(key, map, scanner, fromUpdate);
-
-        if (fromUpdate)
-            HistoryCommand.addHistory("Update");
-        else
-            HistoryCommand.addHistory("Insert");
-    }
-
-    public CommandInsert(Integer newKey, MyTreeMap map, boolean fromUpdate, Flat addingFlat) {
-        map.addFlat(newKey, addingFlat); // Поместили квартиру в map
-        ExecuteRequest.answer.append("Successfully");
+    public CommandInsert() {
     }
 
     /**
      * function to save new attributes
      *
      * @param key        - key of object
-     * @param map        - MAP
+     * @param    - MAP
      * @param scanner    - type of program mod
      * @param fromUpdate - type of updating
      */
-    private void execute(Integer key, MyTreeMap map, Scanner scanner, boolean fromUpdate) {
+    public Flat execute(Integer key, Scanner scanner, boolean fromUpdate) {
         this.scanner = scanner;
+        int id; // Значение поля должно быть больше 0,
+        // Значение этого поля должно быть уникальным,
+        // Значение этого поля должно генерироваться автоматически
+        String name; // Поле не может быть null, Строка не может быть пустой
+        Coordinates coordinates = new Coordinates(0, 0); // Поле не может быть null
+        //private java.util.Date creationDate; // Поле не может быть null, Значение этого поля должно генерироваться автоматически
+        long area; // Максимальное значение поля: 667, Значение поля должно быть больше 0
+        Long numberOfRooms; // Поле может быть null, Значение поля должно быть больше 0
+        int numberOfBathrooms; // Значение поля должно быть больше 0
+        long timeToMetroOnFoot; // Значение поля должно быть больше 0
+        Furnish furnish; // Поле не может быть null
+        House house;
 
-        if (!fromUpdate) {
-            id = ID_MAX;
-        } else {
-            id = map.getMyMap().get(key).getId();
-        }
+        id = ID_MAX;
 
         try {
-            name = this.setName();          // обработка имени
+            name = setName();          // обработка имени
             coordinates.setX(setNewX());    // обработка координаты X
             coordinates.setY(setNewY());    // обработка координаты Y
             area = setNewArea();            // задали площадь квартиры
@@ -84,13 +68,14 @@ public class CommandInsert {
                     .setFurnish(furnish)
                     .setHouse(house)
                     .build();
-            map.addFlat(key, newFlat); // Поместили квартиру в map
-            ExecuteRequest.answer.append("Successfully");
+            return newFlat;
+            //ExecuteRequest.answer.append("Successfully");
         } catch (InvalidArgExcaption e) {
             System.out.println(e.getMessage());
         } catch (Exception e) {
             System.out.println("Wrong format");
         }
+        throw new RuntimeException("ERROR");
     }
 
     private String setName()

@@ -9,7 +9,7 @@ public class App {
 
         Scanner scanner = new Scanner(System.in);
 
-        Client client = new Client("localhost", 2468, scanner);
+        Client client = new Client("localhost", 2467, scanner);
         client.run();
     }
 }

@@ -1,5 +1,7 @@
 import collectionofflats.MyTreeMap;
 import collectionofflats.StartWorkWithCollection;
+import commands.Execute;
+import commands.exceptions.ExitException;
 import data.netdata.Report;
 import data.netdata.Request;
 import data.workwithrequest.ExecuteRequest;
@@ -27,7 +29,24 @@ public class Server {
     public void run() {
         myMap = StartWorkWithCollection.initialization();
         try {
-            socket = new DatagramSocket(2468);
+            socket = new DatagramSocket(2467);
+
+            Runnable userInput = () -> {
+                try {
+                    while (true) {
+                        String[] userCommand = (scanner.nextLine()).split(" ", 2);
+
+                        if (!userCommand[0].equals("save")) {
+                            System.out.println("Server has command save and command exit as well!");
+                            return;
+                        }
+
+                        Execute.execute(true, myMap, new Scanner("save\nlast\nexit"), null);
+                    }
+                } catch (Exception e) {}
+            };
+            Thread thread = new Thread(userInput);
+            thread.start();
 
             while (true)
                 clientRequest();
@@ -47,20 +66,34 @@ public class Server {
 
             //Getting a new request from client and doing it
             socket.receive(getPacket);
-            request = deserialize(getPacket);
-            report = ExecuteRequest.doingRequest(request, myMap);
 
             //Save path to client
             address = getPacket.getAddress();
             PORT = getPacket.getPort();
 
-            //Sending a report to client
-            byte[] sendBuffer = serialize(report);
-            DatagramPacket sendPacket = new DatagramPacket(sendBuffer, sendBuffer.length, address, PORT);
-            socket.send(sendPacket);
-            System.out.println("Sending to " + sendPacket.getAddress() + ", message: " + report.getReportBody());
-        } catch (Exception e) {
+            //invoke the command
+            request = deserialize(getPacket);
+            report = ExecuteRequest.doingRequest(request, myMap);
+
+
+        } catch (ExitException e) {
+            return;
+        } catch (IOException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            //Sending a report to client
+            byte[] sendBuffer = new byte[0];
+            try {
+                sendBuffer = serialize(report);
+                DatagramPacket sendPacket = new DatagramPacket(sendBuffer, sendBuffer.length, address, PORT);
+                socket.send(sendPacket);
+                System.out.println("Sending to " + sendPacket.getAddress() + ", message: " + report.getReportBody());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 

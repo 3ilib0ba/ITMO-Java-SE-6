@@ -1,5 +1,8 @@
+import commands.Execute;
+import commands.exceptions.ExitException;
 import data.netdata.Report;
 import data.netdata.Request;
+import data.workwithrequest.ExecuteRequest;
 
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -40,7 +43,12 @@ public class Client {
 
             while (true) {
                 request = null; // new initialization
-                sendRequest(request);
+                try {
+                    sendRequest(request);
+                } catch (ExitException e) {
+                    System.out.println("End of client life...");
+                    return;
+                }
 
                 answer = null; // new initialization
                 answer = getAnswer();
@@ -52,16 +60,21 @@ public class Client {
             try {
                 selector.close();
             } catch (IOException e) {
-                System.out.println("Selector can't be closing");;
+                System.out.println("Selector can't be closing");
             }
         }
     }
 
     private void sendRequest(Request request)
             throws IOException {
-        System.out.print("Enter the command: ");
-        String command = scanner.nextLine();
-        request = new Request(command, "");
+        try {
+            request = ExecuteRequest.doingRequest();
+        } catch (ExitException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+            sendRequest(request);
+        }
 
         byteBuffer = ByteBuffer.wrap(serialize(request));
 

@@ -3,9 +3,9 @@ package data.netdata;
 import java.io.Serializable;
 
 public class Request implements Serializable {
-    private final String commandName;
-    private final String argument;
-    private final Serializable objectArgument;
+    private String commandName;
+    private String argument;
+    private Serializable objectArgument;
 
     public Request(String commandName, String argument, Serializable objectArgument) {
         this.commandName = commandName;
@@ -34,7 +34,7 @@ public class Request implements Serializable {
     }
 
     public Object getObjectArgument() {
-        return objectArgument;
+        return objectArgument == null ? "null" : objectArgument;
     }
 
     public boolean isEmpty() {
