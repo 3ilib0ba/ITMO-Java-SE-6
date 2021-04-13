@@ -89,7 +89,8 @@ public class Server {
                 sendBuffer = serialize(report);
                 DatagramPacket sendPacket = new DatagramPacket(sendBuffer, sendBuffer.length, address, PORT);
                 socket.send(sendPacket);
-                System.out.println("Sending to " + sendPacket.getAddress() + ", message: " + report.getReportBody());
+                System.out.println("Sending to " + sendPacket.getAddress() + ", message: " +
+                        (report == null ? "ERROR" : report.getReportBody()));
             } catch (IOException e) {
                 e.printStackTrace();
             }

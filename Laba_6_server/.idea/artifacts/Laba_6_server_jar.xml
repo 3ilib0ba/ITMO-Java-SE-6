@@ -5,6 +5,7 @@
       <element id="archive" name="Laba_6_server.jar">
         <element id="module-output" name="Laba_6_server" />
       </element>
+      <element id="library" level="project" name="gson-2.8.6" />
     </root>
   </artifact>
 </component>

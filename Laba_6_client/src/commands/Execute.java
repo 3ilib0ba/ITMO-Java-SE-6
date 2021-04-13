@@ -193,9 +193,9 @@ public class Execute {
                 case "load":
                     if (commands.length == 2) {
                         String path = commands[1];
-                        return new Request(command, path);
+                        return new Request("load", path);
                     } else {
-                        throw new IllegalCommandException("Wrong format. Need -> 'count_less_than_number_of_bathrooms <NUMBER>'");
+                        throw new IllegalCommandException("Wrong format");
                     }
 
                 case "filter_starts_by_name":

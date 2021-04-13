@@ -202,9 +202,14 @@ public class Execute {
                 case "load":
                     if (commands.length == 2) {
                         String path = commands[1];
-                        map.addToTree(ReadCommand.readTheCollection(path));
+                        System.out.println(path);
+                        try {
+                            map.addToTree(ReadCommand.readTheCollection(path));
+                        } catch (Exception e) {
+                            throw new InvalidArgExcaption("Exit from LOADcommand with some exception");
+                        }
                     } else {
-                        throw new IllegalCommandException("Wrong format. Need -> 'count_less_than_number_of_bathrooms <NUMBER>'");
+                        throw new IllegalCommandException("Wrong format.");
                     }
                     break;
                 case "filter_starts_by_name":
