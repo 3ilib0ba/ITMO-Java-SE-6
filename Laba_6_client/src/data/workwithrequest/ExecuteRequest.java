@@ -22,9 +22,4 @@ public abstract class ExecuteRequest {
         return sendingRequest;
     }
 
-    public static Report makeReport(ReportState state, StringBuilder body) {
-        Report reportToClient = new Report(state, body.toString());
-
-        return reportToClient;
-    }
 }

@@ -6,6 +6,7 @@ import data.workwithrequest.ExecuteRequest;
 
 import java.io.*;
 import java.net.InetSocketAddress;
+import java.net.PortUnreachableException;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
@@ -51,8 +52,13 @@ public class Client {
                 }
 
                 answer = null; // new initialization
-                answer = getAnswer();
-                System.out.println("Received from server: " + answer.getReportBody());
+                try {
+                    answer = getAnswer();
+                    System.out.println("Received from server: " + answer.getReportBody());
+                } catch (PortUnreachableException e) {
+                    System.out.println("Server isn't working now");
+                    sendRequest(request);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -67,6 +73,7 @@ public class Client {
 
     private void sendRequest(Request request)
             throws IOException {
+
         try {
             request = ExecuteRequest.doingRequest();
         } catch (ExitException e) {
@@ -79,6 +86,7 @@ public class Client {
         byteBuffer = ByteBuffer.wrap(serialize(request));
 
         // sending from selector with unblocking configuration
+
         selector.select();
         Set<SelectionKey> selectionKeys = selector.selectedKeys();
         for (SelectionKey key : selectionKeys) {
