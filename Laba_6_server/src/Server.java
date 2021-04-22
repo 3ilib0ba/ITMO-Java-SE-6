@@ -11,6 +11,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Server {
@@ -35,28 +36,37 @@ public class Server {
                 try {
                     while (true) {
                         String[] userCommand = (scanner.nextLine()).split(" ", 2);
-
-                        if (!userCommand[0].equals("save")) {
+                        System.out.println(Arrays.toString(userCommand));
+                        if (userCommand[0].equals("save") || userCommand[0].equals("exit")) {
+                            if (userCommand[0].equals("save") || userCommand.length == 2) {
+                                Execute.execute(true, myMap, new Scanner("save\n" + userCommand[1] + "\nexit"), null);
+                            }
+                            if (userCommand[0].equals("exit")) {
+                                Execute.execute(true, myMap, new Scanner("exit"), null);
+                            }
+                        } else {
                             System.out.println("Server has command save and command exit as well!");
-                            return;
                         }
 
-                        Execute.execute(true, myMap, new Scanner("save\nlast\nexit"), null);
                     }
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                }
             };
             Thread thread = new Thread(userInput);
             thread.start();
 
-            while (true)
+            while (true) {
                 clientRequest();
+            }
+
         } catch (SocketException e) {
             e.printStackTrace();
         }
 
     }
 
-    public void clientRequest() {
+    public void clientRequest()
+            throws ExitException {
         Request request = null;
         Report report = null;
 
@@ -77,7 +87,7 @@ public class Server {
 
 
         } catch (ExitException e) {
-            return;
+            throw e;
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
